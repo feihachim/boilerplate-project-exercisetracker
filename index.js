@@ -60,7 +60,7 @@ app.post('/api/users/:_id/exercises',(req,res)=>{
     const exercise=new Exercise({
       description:description,
       duration:duration,
-      date:date.toDateString(),
+      date:date,
       userId:userId,
       username:user.username
     });
@@ -73,19 +73,40 @@ app.post('/api/users/:_id/exercises',(req,res)=>{
         username:insertedExercise.username,
         description:insertedExercise.description,
         duration:insertedExercise.duration,
-        date:insertedExercise.date
+        date:insertedExercise.date.toDateString()
       }
       res.json(result);
     });
   });
 });
 
+function isValidDate(d){
+  return d instanceof Date &&!isNaN(d);
+}
+
 app.get('/api/users/:_id/logs',(req,res)=>{
-  // TODO
+
   const userId=req.params._id;
-  Exercise.find({userId:userId},(error,exercises)=>{
+  
+    const from=new Date(req.query.from);
+    const to=new Date(req.query.to);
+    const limit=Number(req.query.limit);
+  
+  const query=Exercise.find({userId:userId});
+  if(isValidDate(from)){
+    query.where('date').gte(from);
+  }
+  if(isValidDate(to)){
+    query.where('date').lte(to);
+  }
+  if(!isNaN(limit)){
+    query.limit(limit);
+  }
+  
+  query.exec((error,exercises)=>{
     if(error){
-      return handleError(error);
+      console.log(error);
+      return new Error(error);
     }
     const username=exercises[0].username;
     const exrecisesCount=exercises.length;
@@ -93,7 +114,7 @@ app.get('/api/users/:_id/logs',(req,res)=>{
       return {
         description:item.description,
         duration:item.duration,
-        date:item.date
+        date:item.date.toDateString()
       }
     });
     res.json({
