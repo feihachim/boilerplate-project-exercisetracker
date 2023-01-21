@@ -48,7 +48,7 @@ app.get('/api/users',(req,res)=>{
 });
 
 app.post('/api/users/:_id/exercises',(req,res)=>{
-  //TODO
+  
   const userId=req.params._id;
   const description=req.body.description;
   const duration=Number(req.body.duration);
@@ -82,6 +82,27 @@ app.post('/api/users/:_id/exercises',(req,res)=>{
 
 app.get('/api/users/:_id/logs',(req,res)=>{
   // TODO
+  const userId=req.params._id;
+  Exercise.find({userId:userId},(error,exercises)=>{
+    if(error){
+      return handleError(error);
+    }
+    const username=exercises[0].username;
+    const exrecisesCount=exercises.length;
+    const exercisesList=exercises.map((item)=>{
+      return {
+        description:item.description,
+        duration:item.duration,
+        date:item.date
+      }
+    });
+    res.json({
+      username:username,
+      count:exrecisesCount,
+      _id:userId,
+      log:exercisesList
+    });
+  });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
