@@ -49,6 +49,35 @@ app.get('/api/users',(req,res)=>{
 
 app.post('/api/users/:_id/exercises',(req,res)=>{
   //TODO
+  const userId=req.params._id;
+  const description=req.body.description;
+  const duration=Number(req.body.duration);
+  const date=req.body.date?new Date(req.body.date):new Date();
+  User.findOne({_id:userId},(error,user)=>{
+    if(error){
+      return handleError(error);
+    }
+    const exercise=new Exercise({
+      description:description,
+      duration:duration,
+      date:date.toDateString(),
+      userId:userId,
+      username:user.username
+    });
+    exercise.save((err,insertedExercise)=>{
+      if(err){
+        return handleError(err);
+      }
+      const result={
+        _id:insertedExercise.userId,
+        username:insertedExercise.username,
+        description:insertedExercise.description,
+        duration:insertedExercise.duration,
+        date:insertedExercise.date
+      }
+      res.json(result);
+    });
+  });
 });
 
 app.get('/api/users/:_id/logs',(req,res)=>{

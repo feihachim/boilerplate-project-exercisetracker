@@ -11,12 +11,16 @@ const exerciseSchema = new mongoose.Schema({
         required:true
     },
     date:{
-        type:Date,
+        type:String,
         required:true
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
+        required:true
+    },
+    username:{
+        type:String,
         required:true
     }
 });
