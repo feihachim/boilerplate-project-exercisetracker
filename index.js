@@ -81,7 +81,7 @@ app.post('/api/users/:_id/exercises',(req,res)=>{
 });
 
 function isValidDate(d){
-  return d instanceof Date &&!isNaN(d);
+  return d instanceof Date && !isNaN(d);
 }
 
 app.get('/api/users/:_id/logs',(req,res)=>{
