@@ -92,15 +92,15 @@ app.get('/api/users/:_id/logs',(req,res)=>{
     const to=new Date(req.query.to);
     const limit=Number(req.query.limit);
   
-  const query=Exercise.find({userId:userId});
+  let query=Exercise.find({userId:userId});
   if(isValidDate(from)){
-    query.where('date').gte(from);
+    query=query.where('date').gte(from);
   }
   if(isValidDate(to)){
-    query.where('date').lte(to);
+    query=query.where('date').lte(to);
   }
   if(!isNaN(limit)){
-    query.limit(limit);
+    query=query.limit(limit);
   }
   
   query.exec((error,exercises)=>{
